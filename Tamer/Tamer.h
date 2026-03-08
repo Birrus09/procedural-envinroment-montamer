@@ -18,7 +18,8 @@ std::vector<Move> global_moveset;
 
 struct creature{
     std::string name;
-    std::vector<int> base_stats; // [atk, def, matk, mdef, spd, hp, growth_rate]
+    std::vector<int> base_stats; // [atk, def, matk, mdef, spd, hp]
+    float growth_rate;
     std::vector<int> moves_learning_level;
     std::vector<Move> moveset;
     creature* evolution;
@@ -33,6 +34,7 @@ struct creature_instance{
     int xp_treshold;
     int hp;
     int hpmax;
+    int mana; // x/5
     std::vector<int> stats;
     std::vector<int> genetics;
     std::vector<Move> moves;
@@ -57,6 +59,7 @@ creature_instance CreateInstance(creature base, std::vector<int> genetics_vector
         1,
         base.base_stats[5] * genetics_vector[5],
         base.base_stats[5] * genetics_vector[5],
+        5,
         {base.base_stats[0] * genetics_vector[0], base.base_stats[1] * genetics_vector[1], base.base_stats[2] * genetics_vector[2], base.base_stats[3] * genetics_vector[3], base.base_stats[4] * genetics_vector[4]},
         genetics_vector,
         {},
@@ -72,7 +75,7 @@ creature_instance CreateInstance(creature base, std::vector<int> genetics_vector
 
 
 void UpdateXpTreshold(creature_instance &instance){
-    instance.xp_treshold = 10 * std::pow(instance.lvl, 1.3 / instance.instance_of->base_stats[6]);
+    instance.xp_treshold = 10 * std::pow(instance.lvl-1, 1.3 / instance.instance_of->growth_rate) + 100;
 }
 
 
@@ -84,4 +87,8 @@ void LevelUp(creature_instance &instance){
     }
 }
 
+
+creature mr_cerbiatto{"mr_cerbiatto", {100, 100, 100, 100, 100, 100}, 1.7, {1, 5, 7, 13}, {}, nullptr, -1};
+
+creature_instance cerbiatto_instance = CreateInstance(mr_cerbiatto, {1, 1, 1, 1, 1, 1}, "mr_istanza");
 
