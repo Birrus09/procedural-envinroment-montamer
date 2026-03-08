@@ -1,4 +1,24 @@
+---PROC_ENV---
+
 NoiseGen
 WorldGen
 GameLoop
 3d rendering
+
+
+---BEAST TAMER---
+
+add creature dictionary
+add battle system
+add saving on file
+add UI with tests:
+  - squad manager
+  - battle
+  - mini game demo
+
+
+
+
+
+
+future: add procedural colors to creatures
