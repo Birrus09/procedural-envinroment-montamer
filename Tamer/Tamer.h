@@ -10,18 +10,11 @@ struct Move{
     std::string name;
     int power;
     int accuracy;
-    int type; //0 physical, 1 magical, 2 status, 3 healing
+    bool types[4]; //0 physical, 1 magical, 2 status, 3 healing
     std::vector<std::string> effects;
-    std::vector<int> targets;
     //1     2       3
     //
     //   4      5       6
-};
-
-
-struct Puppa{
-    std::string move;
-    int target;
 };
 
 
@@ -54,16 +47,26 @@ struct creature_instance{
     //get stats with
     creature* instance_of;
     int timer = 0;
-    int battle_position;
+    //int battle_position; may be useful
 
     void set_timer(){
         timer = maxspd - stats[4];
     }
 
-    Puppa taketurn(){
+
+
+    Move mossa1{
+        "ciao",
+        50,
+        100,
+        0,
+        {},
+    };
+
+    Puppa taketurn(team targets){
         Puppa choice{
-            "none",
-            1
+            mossa1,
+            targets.members[1]
         };
 
         return choice;
