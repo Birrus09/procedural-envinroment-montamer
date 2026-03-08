@@ -52,7 +52,7 @@ void Convolution(int width, int height, vector<float> &origin){
 
 
 //clip/gate
-void ClipGate(float treshold, int mode = 0, vector<float> &origin){
+void ClipGate(float treshold, vector<float> &origin, int mode = 0){
     if (mode==0){
         //clip
         for (int i = 0; i < origin.size(); i++){
