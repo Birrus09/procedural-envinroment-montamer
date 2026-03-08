@@ -8,8 +8,8 @@ struct Move{
     std::string name;
     int power;
     int accuracy;
-    int type; //0 physical, 1 magical, 2 status
-    int effect; //0 none, 1 burn, 2 poison, 3 paralyze, 4 sleep
+    int type; //0 physical, 1 magical, 2 status, 3 healing
+    int effect; 
 };
 
 

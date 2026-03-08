@@ -1,6 +1,6 @@
 //test game loop 
 #include <iostream>
-#include "Tamer.h"
+#include "battle.h"
 //[atk, def, matk, mdef, spd, hp]
 
 using namespace std;
