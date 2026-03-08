@@ -1,16 +1,10 @@
 //noise generation and processing
 #include <vector>
+#include <fstream>
+#include "randomcust.h"
 
 using namespace std;
 
-
-
-
-float randomnum(int &seed){
-    seed = (seed * 1354) % 4273;
-    float caspita = seed / 4273.0;
-    return caspita;
-}
 
 
 //generate noisemap
@@ -58,7 +52,7 @@ void Convolution(int width, int height, vector<float> &origin){
 
 
 //clip/gate
-void ClipGate(float treshold, int mode=0, vector<float> &origin){
+void ClipGate(float treshold, int mode = 0, vector<float> &origin){
     if (mode==0){
         //clip
         for (int i = 0; i < origin.size(); i++){
