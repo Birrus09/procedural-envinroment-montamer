@@ -9,6 +9,7 @@ struct Move{
     int power;
     int accuracy;
     int type; //0 physical, 1 magical, 2 status, 3 healing
+    bool isExtra
     int effect; 
 };
 
