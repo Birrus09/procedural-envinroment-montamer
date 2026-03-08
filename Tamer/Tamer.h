@@ -2,6 +2,8 @@
 #include <string>
 #include <cmath>
 
+#define maxspd 750
+#define maxstats 300
 
 
 struct Move{
@@ -9,8 +11,17 @@ struct Move{
     int power;
     int accuracy;
     int type; //0 physical, 1 magical, 2 status, 3 healing
-    bool isExtra
-    std::vector<std::string> effects 
+    std::vector<std::string> effects;
+    std::vector<int> targets;
+    //1     2       3
+    //
+    //   4      5       6
+};
+
+
+struct Puppa{
+    std::string move;
+    int target;
 };
 
 
@@ -42,6 +53,23 @@ struct creature_instance{
     std::vector<std::string> status;
     //get stats with
     creature* instance_of;
+    int timer = 0;
+    int battle_position;
+
+    void set_timer(){
+        timer = maxspd - stats[4];
+    }
+
+    Puppa taketurn(){
+        Puppa choice{
+            "none",
+            1
+        };
+
+        return choice;
+    }
+    
+
 };
 
 
@@ -65,7 +93,8 @@ creature_instance CreateInstance(creature base, std::vector<int> genetics_vector
         genetics_vector,
         {},
         {},
-        &base
+        &base,
+        0
     };
     return giveback;
 }
