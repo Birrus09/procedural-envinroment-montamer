@@ -9,6 +9,7 @@ GameLoop
 
 ---Biomes:
 
+
 --pianura:
 (notte) giraffoni lampioni 
 con 3 occhi che fanno luce per cercare le prede
@@ -55,7 +56,9 @@ mai tempesta (nelle isole)
 --pozze di grafite
 lucertoloni con armatura di roccia 
 
-
+--palude
+rosponi giganti a 6 zampe che usano la lingua come rampino
+insetti a 4 zampe che infilzano le prede e hanno una grande antenna per captare i suoni
 
 
 
