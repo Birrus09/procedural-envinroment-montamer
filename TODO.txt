@@ -6,6 +6,77 @@ GameLoop
 3d rendering
 
 
+
+---Biomes:
+
+--pianura:
+(notte) giraffoni lampioni 
+con 3 occhi che fanno luce per cercare le prede
+pecore, normali pecore
+tigre erbivora con 6 zampe e strati di criniera alternati (prede dei giraffoni) 
+
+--foresta alta:
+(giorno) giraffoni  (hanno una bocca sul collo che macina le prede) 
+ci dormono mimetizzandosi tra gli alberi
+difesidai dei roditori he usano Cerbottane fatte da dei rami per sparare ghiande come proiettili che in cambio ricevono cibo dai giraffoni
+
+--montagne esagonali:
+porcospini cristallosi
+cespugli di bacche
+mantidi con le proboscidi sulle zampe per succhiare i porcospini
+
+--colline cerchiose
+cerbiatti azzurri luminescenti
+
+--spiaggia di cristalli
+lumacone marine giganti
+piante acquatiche piattaforma <- nidi di uccelli
+pesci saltellanti
+
+
+--oceano spaghettoso + isole del. paradiso volanti con relativi abissi sotto
+
+scoglio con murene
+vari pesci in ordine crescente
+grandi madriperle
+
+vari uccelli colorati(isole) 
+piante da frutto (isole) 
+mai tempesta (nelle isole) 
+
+
+--obeliscone gigante al centro mondo
+
+
+--terra delle patate
+
+--giungla ... 
+
+--pozze di grafite
+lucertoloni con armatura di roccia 
+
+
+
+
+
+--vulcano smagma (gotico) 
+--deserto coi fossili giganti
+--grotte piene di funghi
+-rete di micelio
+--cascate di ghiaccio
+
+--senza bioma
+meduse volanti
+
+---Eventi meteorologici
+
+--tornado/tempesta
+-falco della tempesta
+
+
+
+
+
 ---BEAST TAMER---
 
 add creature dictionary
