@@ -62,7 +62,10 @@ lucertoloni con armatura di roccia
 --vulcano smagma (gotico) 
 --deserto coi fossili giganti
 --grotte piene di funghi
--rete di micelio
+ragnone overgrown dai funghi
+rete di micelio
+rospi viscidi che vivono in acqua e se escono vengono presi dai funghi
+
 --cascate di ghiaccio
 
 --senza bioma
