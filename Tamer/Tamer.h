@@ -10,13 +10,20 @@ struct Move{
     std::string name;
     int power;
     int accuracy;
-    bool types[4]; //0 physical, 1 magical, 2 status, 3 healing
+    bool types[4];  //0 physical, 1 magical, 2 status, 3 healing
     std::vector<std::string> effects;
     //1     2       3
     //
     //   4      5       6
 };
 
+Move mossa1{
+    "ciao",
+    50,
+    100,
+    0,
+    {},
+};
 
 std::vector<Move> global_moveset;
 
@@ -54,24 +61,22 @@ struct creature_instance{
     }
 
 
-
-    Move mossa1{
-        "ciao",
-        50,
-        100,
-        0,
-        {},
-    };
-
     Puppa taketurn(team targets){
         Puppa choice{
             mossa1,
-            targets.members[1]
+            targets.members[0],
+            this
         };
-
         return choice;
     }
-    
+    Puppa AItaketurn(team targets){
+        Puppa choice{
+            mossa1,
+            targets.members[0],
+            this
+        };
+        return choice;
+    }
 
 };
 
@@ -124,4 +129,3 @@ void LevelUp(creature_instance &instance){
 creature mr_cerbiatto{"mr_cerbiatto", {100, 100, 100, 100, 100, 100}, 1.7, {1, 5, 7, 13}, {}, nullptr, -1};
 
 creature_instance cerbiatto_instance = CreateInstance(mr_cerbiatto, {1, 1, 1, 1, 1, 1}, "mr_istanza");
-
