@@ -5,16 +5,28 @@
 #define maxspd 750
 #define maxstats 300
 
+using namespace std;
 
 struct Move{
-    std::string name;
+    string name;
     int power;
     int accuracy;
     bool types[4];  //0 physical, 1 magical, 2 status, 3 healing
-    std::vector<std::string> effects;
+    vector<string> effects;
     //1     2       3
     //
     //   4      5       6
+};
+struct creature_instance;
+struct team
+{
+    std::vector<creature_instance> members;
+};
+
+struct Puppa{
+    Move mossa;
+    creature_instance &target;
+    creature_instance &applier;
 };
 
 Move mossa1{
@@ -25,32 +37,32 @@ Move mossa1{
     {},
 };
 
-std::vector<Move> global_moveset;
+vector<Move> global_moveset;
 
 
 struct creature{
-    std::string name;
-    std::vector<int> base_stats; // [atk, def, matk, mdef, spd, hp]
+    string name;
+    vector<int> base_stats; // [atk, def, matk, mdef, spd, hp]
     float growth_rate;
-    std::vector<int> moves_learning_level;
-    std::vector<Move> moveset;
+    vector<int> moves_learning_level;
+    vector<Move> moveset;  //change to moveset index
     creature* evolution;
     int evolution_level;
     
 };
 
 struct creature_instance{
-    std::string name;
+    string name;
     int lvl;
     int xp;
     int xp_treshold;
     int hp;
     int hpmax;
     int mana; // x/5
-    std::vector<int> stats;
-    std::vector<int> genetics;
-    std::vector<Move> moves;
-    std::vector<std::string> status;
+    vector<int> stats;
+    vector<float> genetics;
+    vector<Move> moves;
+    vector<string> status;
     //get stats with
     creature* instance_of;
     int timer = 0;
@@ -65,7 +77,7 @@ struct creature_instance{
         Puppa choice{
             mossa1,
             targets.members[0],
-            this
+            *this
         };
         return choice;
     }
@@ -73,7 +85,7 @@ struct creature_instance{
         Puppa choice{
             mossa1,
             targets.members[0],
-            this
+            *this
         };
         return choice;
     }
@@ -88,20 +100,20 @@ struct creature_instance{
 //at lvl 7 it gets cut
 
 
-creature_instance CreateInstance(creature base, std::vector<int> genetics_vector, std::string name){
+creature_instance CreateInstance(creature* base, vector<float> genetics_vector, string name){
     creature_instance giveback{
         name,
         1,
         0,
         1,
-        base.base_stats[5] * genetics_vector[5],
-        base.base_stats[5] * genetics_vector[5],
+        (int)(base->base_stats[5] * genetics_vector[5]),
+        (int)(base->base_stats[5] * genetics_vector[5]),
         5,
-        {base.base_stats[0] * genetics_vector[0], base.base_stats[1] * genetics_vector[1], base.base_stats[2] * genetics_vector[2], base.base_stats[3] * genetics_vector[3], base.base_stats[4] * genetics_vector[4]},
+        {(int)(base->base_stats[0] * genetics_vector[0]), (int)(base->base_stats[1] * genetics_vector[1]), (int)(base->base_stats[2] * genetics_vector[2]), (int)(base->base_stats[3] * genetics_vector[3]), (int)(base->base_stats[4] * genetics_vector[4])},
         genetics_vector,
         {},
         {},
-        &base,
+        base,
         0
     };
     return giveback;
@@ -113,7 +125,7 @@ creature_instance CreateInstance(creature base, std::vector<int> genetics_vector
 
 
 void UpdateXpTreshold(creature_instance &instance){
-    instance.xp_treshold = 10 * std::pow(instance.lvl-1, 1.3 / instance.instance_of->growth_rate) + 100;
+    instance.xp_treshold = 10 * pow(instance.lvl-1, 1.3 / instance.instance_of->growth_rate) + 100;
 }
 
 
@@ -126,6 +138,19 @@ void LevelUp(creature_instance &instance){
 }
 
 
+
+
+creature_instance Evolve(creature_instance &instance){
+    creature_instance evoluzione;
+    evoluzione = CreateInstance(instance.instance_of->evolution, instance.genetics, instance.instance_of->evolution->name);
+    delete(&instance);
+    return evoluzione;
+}
+
+
+
 creature mr_cerbiatto{"mr_cerbiatto", {100, 100, 100, 100, 100, 100}, 1.7, {1, 5, 7, 13}, {}, nullptr, -1};
 
-creature_instance cerbiatto_instance = CreateInstance(mr_cerbiatto, {1, 1, 1, 1, 1, 1}, "mr_istanza");
+creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1}, "mr_istanza");
+creature_instance cerbiatto_instance2 = CreateInstance(&mr_cerbiatto, {1.1, 0.9, 1, 1, 1.1}, "mr_istanza2");
+
