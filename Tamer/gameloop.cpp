@@ -30,6 +30,13 @@ int main(){
             << "matk: " << cerbiatto_instance.stats[2] << endl
             << "mdef: " << cerbiatto_instance.stats[3] << endl
             << "spd: " << cerbiatto_instance.stats[4] << endl;
+            //print movesset
+            cout << "Moveset: " << endl;
+            for (int i = 0; i < cerbiatto_instance.moves.size(); i++){
+                //debugging
+                cout << cerbiatto_instance.moves[i]<< endl;
+                cout << global_moveset[cerbiatto_instance.moves[i]].name << endl;
+            }
         }
         if (opt == 2){
             UpdateXpTreshold(cerbiatto_instance);
