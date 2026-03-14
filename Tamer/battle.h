@@ -1,15 +1,5 @@
 #include "Tamer.h"
 
-struct team{
-    std::vector<creature_instance> members;
-};
-
-
-struct Puppa{
-    Move mossa;
-    creature_instance &target;
-    creature_instance &applier;
-};
 
 void apply_move(Puppa values){
     if(values.mossa.types[0]){
@@ -96,6 +86,7 @@ int battle(team team1, team team2, team total){
         if (IsAlive[3] == 0 && IsAlive[4] == 0 && IsAlive[5] == 0){
             outcome = 1;
             break;
+        }
     }
 
     //return 1 if team1 wins, 2 if team2 wins
