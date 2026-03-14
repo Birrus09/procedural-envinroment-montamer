@@ -7,7 +7,7 @@ using namespace std;
 
 
 void menu(){
-    cout << "0) quit, 1) see creature status" << endl;
+    cout << "0) quit, 1) see creature status, 2)see creature2 status" << endl;
 }
 
 
@@ -30,6 +30,22 @@ int main(){
             << "matk: " << cerbiatto_instance.stats[2] << endl
             << "mdef: " << cerbiatto_instance.stats[3] << endl
             << "spd: " << cerbiatto_instance.stats[4] << endl;
+        }
+        if (opt == 2){
+            UpdateXpTreshold(cerbiatto_instance);
+            cout << "Creature Status:" << endl
+            << "Name: " << cerbiatto_instance2.name << endl
+            << "Level: " << cerbiatto_instance2.lvl << endl
+            << "HP: " << cerbiatto_instance2.hp << "/" << cerbiatto_instance.hpmax << endl
+            << "Mana: " << cerbiatto_instance2.mana << endl
+            << "XP: " << cerbiatto_instance2.xp << "/" << cerbiatto_instance.xp_treshold << endl
+            << "Stats: " << endl
+            << "atk: " << cerbiatto_instance2.stats[0] << endl
+            << "def: " << cerbiatto_instance2.stats[1] << endl
+            << "matk: " << cerbiatto_instance2.stats[2] << endl
+            << "mdef: " << cerbiatto_instance2.stats[3] << endl
+            << "spd: " << cerbiatto_instance2.stats[4] << endl;
+
         }
     } while (opt != 0);
 
