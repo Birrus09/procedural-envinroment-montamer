@@ -1,4 +1,5 @@
 #include "Tamer.h"
+#include <ctime>
 
 
 void apply_move(Puppa values){
@@ -69,7 +70,7 @@ int battle(team team1, team team2, team total){
         for (int i = 0; i<team2.members.size(); i++){
             if (team2.members[i].timer == 0){
                 currentturn = i+1;
-                apply_move(team2.members[i].AItaketurn(total));
+                apply_move(team2.members[i].AItaketurn(total, time(NULL)));
                 for (int j = 0; j < total.members.size(); j++){
                     if (total.members[j].hp < 0){
                         IsAlive[j] = 0;
