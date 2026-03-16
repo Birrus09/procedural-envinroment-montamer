@@ -7,7 +7,7 @@ using namespace std;
 
 
 void menu(){
-    cout << "0) quit, 1) see creature status, 2)see creature2 status" << endl;
+    cout << "0) quit, 1) see creature status, 2) see creature2 status, 3) check initialization" << endl;
 }
 
 
@@ -33,9 +33,7 @@ int main(){
             //print movesset
             cout << "Moveset: " << endl;
             for (int i = 0; i < cerbiatto_instance.moves.size(); i++){
-                //debugging
-                cout << cerbiatto_instance.moves[i]<< endl;
-                cout << global_moveset[cerbiatto_instance.moves[i]].name << endl;
+                cout << i +1 << ") " << global_moveset[cerbiatto_instance.moves[i]].name << endl;
             }
         }
         if (opt == 2){
@@ -53,6 +51,13 @@ int main(){
             << "mdef: " << cerbiatto_instance2.stats[3] << endl
             << "spd: " << cerbiatto_instance2.stats[4] << endl;
 
+        }
+
+        if (opt == 3){
+            Load_Moveset("mosse.txt", global_moveset);
+            for (int i = 0; i < global_moveset.size(); i++){
+                cout << global_moveset[i].name << endl;
+            }
         }
     } while (opt != 0);
 
