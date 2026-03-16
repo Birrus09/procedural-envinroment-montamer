@@ -1,0 +1,2 @@
+ciao_inizializzato 55 100 1 0 0 0 end
+ciao_inizializzato2 60 100 1 0 0 0 end
