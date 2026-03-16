@@ -2,6 +2,7 @@
 #include <string>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include "../randomcust.h"
 
 #define maxspd 750
@@ -36,15 +37,29 @@ struct Puppa{
     creature_instance &applier;
 };
 
-Move mossa1{
-    "ciao",
-    50,
-    100,
-    0,
-    {},
-};
+void Load_Moveset(string Filename, vector<Move> &moveset){
+    string temp1;
+    int temp2, temp3;
+    bool temp4[4];
 
-vector<Move> global_moveset = {mossa1};
+    ifstream filein(Filename);
+    while(filein >> temp1 >> temp2 >> temp3 >> temp4[0] >> temp4[1] >> temp4[2] >> temp4[3]){
+        Move temp_move{
+            temp1,
+            temp2,
+            temp3,
+            {temp4[0], temp4[1], temp4[2], temp4[3]},
+            {}};
+        string effect;
+        while(filein >> effect && effect != "end"){
+            temp_move.effects.push_back(effect);
+        }
+        moveset.push_back(temp_move);
+    }
+    filein.close();
+}
+
+vector<Move> global_moveset = {};
 
 
 struct creature{
@@ -110,7 +125,7 @@ struct creature_instance{
     Puppa AItaketurn(team targets, int seed){
 
         Puppa choice{
-            mossa1,
+            global_moveset[0],
             targets.members[randomnum(seed)*1000 / targets.members.size()],
             *this
         };
@@ -141,7 +156,7 @@ creature_instance CreateInstance(creature* base, vector<float> genetics_vector, 
         5,
         {(int)(base->base_stats[0] * genetics_vector[0]), (int)(base->base_stats[1] * genetics_vector[1]), (int)(base->base_stats[2] * genetics_vector[2]), (int)(base->base_stats[3] * genetics_vector[3]), (int)(base->base_stats[4] * genetics_vector[4])},
         genetics_vector,
-        {},
+        {0},
         {},
         base,
         0
