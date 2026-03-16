@@ -1,6 +1,6 @@
-#include "Tamer.h"
-#include <ctime>
 
+#include <ctime>
+#include "Tamer.h"
 
 void apply_move(Puppa values){
     if(values.mossa.types[0]){
