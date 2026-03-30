@@ -43,6 +43,10 @@ void Load_Moveset(string Filename, vector<Move> &moveset){
     bool temp4[4];
 
     ifstream filein(Filename);
+
+    string firstLine;
+    getline(filein, firstLine);
+
     while(filein >> temp1 >> temp2 >> temp3 >> temp4[0] >> temp4[1] >> temp4[2] >> temp4[3]){
         Move temp_move{
             temp1,
@@ -132,6 +136,29 @@ struct creature_instance{
         return choice;
     }
 
+
+    void updatexptreshold(){
+        this->xp_treshold = pow(this->lvl, 2.7 / this->instance_of->growth_rate) * 10 + 100;
+    }
+
+    void levelup(){
+        if (this->xp >= this->xp_treshold){
+            this->xp -= this->xp_treshold;
+            this->lvl++;
+            this->updatexptreshold();
+            //update stats
+            for (int i = 0; i < 5; i++){
+                this->stats[i] += (int)(this->instance_of->base_stats[i] * this->genetics[i] * 0.07);
+            }
+                this->hpmax += (int)(this->instance_of->base_stats[5] * this->genetics[5] * 0.08);
+                this->hp = this->hpmax;
+            for (int i = 0; i < this->instance_of->moves_learning_level.size(); i++){
+                if (this->lvl == this->instance_of->moves_learning_level[i]){
+                    this->moves.push_back(this->instance_of->moveset[i]);
+                }
+            }
+        }
+    }
 };
 
 
@@ -150,7 +177,7 @@ creature_instance CreateInstance(creature* base, vector<float> genetics_vector, 
         name,
         1,
         0,
-        1,
+        100,
         (int)(base->base_stats[5] * genetics_vector[5]),
         (int)(base->base_stats[5] * genetics_vector[5]),
         5,
@@ -165,40 +192,6 @@ creature_instance CreateInstance(creature* base, vector<float> genetics_vector, 
 }
 
 
-//change the 1.3 during testing to adjust game experience
-
-
-
-void UpdateXpTreshold(creature_instance &instance){
-    //have no idea
-    instance.xp_treshold = 10 * pow(instance.lvl-1, 1.3 / instance.instance_of->growth_rate) + 100;
-}
-
-
-
-
-
-void LevelUp(creature_instance &instance){
-    instance.lvl++;
-    UpdateXpTreshold(instance);
-    for (int i = 0; i < instance.stats.size(); i++){
-        instance.stats[i] += instance.instance_of->base_stats[i] * 0.1  * instance.genetics[i];
-        if (instance.stats[i] > maxstats){
-            instance.stats[i] = maxstats;
-        }
-    }
-    instance.hpmax += (int)(instance.instance_of->base_stats[5] * 0.1  * instance.genetics[5]);
-    instance.hp = instance.hpmax;
-    instance.mana = 5;
-    for (int i = 0; i < instance.instance_of->moves_learning_level.size(); i++){
-        if (instance.lvl == instance.instance_of->moves_learning_level[i]){
-            instance.moves.push_back(instance.instance_of->moveset[i]);
-        }
-    }
-}
-
-
-
 
 creature_instance Evolve(creature_instance &instance){
     creature_instance evoluzione;
@@ -209,10 +202,23 @@ creature_instance Evolve(creature_instance &instance){
 
 
 
-creature mr_cerbiatto{"mr_cerbiatto", {100, 100, 100, 100, 100, 100}, 1.7, {1, 5, 7, 13}, {0}, nullptr, -1};
-creature fleshgorger{"fleshgorger", {150, 80, 60, 95, 110, 80}, 1.5, {1, 5, 7, 13}, {0}, nullptr, -1};
+creature mr_cerbiatto{"mr_cerbiatto", {100, 100, 100, 100, 100, 100}, 1.7, {1, 5, 7, 13}, {0, 3}, nullptr, -1};
+creature fleshgorger{"fleshgorger", {150, 80, 60, 95, 110, 80}, 1.5, {1, 5, 7, 13}, {0, 6}, nullptr, -1};
+creature not_so_innocuous_rock{"not_so_innocuous_rock", {120, 140, 115, 98, 75, 155}, 1.2, {1, 5, 7, 13}, {0, 6}, nullptr, -1};
+creature innocuous_rock{"innocuous_rock", {30, 75, 55, 90, 65, 85}, 1.9, {1, 5, 7, 13}, {0, 3, 6, 7}, &not_so_innocuous_rock, 10};
+creature miaospellcaster{"spellcaster", {20, 64, 120, 105, 98, 80}, 1.6, {1, 5, 7}, {4, 5, 7}, nullptr, -1};
 
-creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1}, "mr_istanza");
-creature_instance cerbiatto_instance2 = CreateInstance(&mr_cerbiatto, {1.1, 0.9, 1, 1, 1.1}, "mr_istanza2");
-creature_instance cerbiatto_instance3 = CreateInstance(&mr_cerbiatto, {0.8, 1.3, 1, 1.3, 0.7, 1}, "mr_istanza3");
 
+
+//genetics vector are 6 elements long
+creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "mr_istanza");
+creature_instance cerbiatto_instance2 = CreateInstance(&mr_cerbiatto, {1.1, 0.9, 1, 1, 1.1, 1}, "mr_istanza2");
+creature_instance cerbiatto_instance3 = CreateInstance(&mr_cerbiatto, {0.8, 1.3, 1, 1.3, 0.7, 1, 1}, "mr_istanza3");
+
+creature_instance fleshgorger_instance = CreateInstance(&fleshgorger, {1, 1, 1, 1, 1, 1, 1}, "fleshgorger_istanza");
+creature_instance cerbiattp_player = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "Sburb_player");
+creature_instance big_rock = CreateInstance(&not_so_innocuous_rock, {1, 1, 1, 1, 1, 1, 1}, "big_rock");
+
+creature_instance megamiao = CreateInstance(&miaospellcaster, {1, 1, 1, 1, 1, 1, 1}, "miao :£");
+
+vector <creature_instance*> instance_vector_DEBUG = {&cerbiatto_instance, &cerbiatto_instance2, &cerbiatto_instance3, &fleshgorger_instance, &cerbiattp_player, &big_rock, &megamiao};
