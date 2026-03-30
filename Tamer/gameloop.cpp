@@ -1,82 +1,95 @@
-//test game loop 
-#include <iostream>
-#include "battle.h"
-//[atk, def, matk, mdef, spd, hp]
 
-using namespace std;
+#include <ctime>
+#include "Tamer.h"
 
+void apply_move(Puppa values){
+    if(values.mossa.types[0]){
+        if(values.mossa.types[3]){
+            values.target.hp += values.mossa.power * values.applier.stats[0] / 100;
+        }
+        else{
+            values.target.hp -= values.mossa.power * values.applier.stats[0] / values.target.stats[1];
+        }
+    }
 
-void menu(){
-    cout << "0) quit, 1) see creature status, 2) see creature2 status, 3) check initialization, 4) add 100xp to c2" << endl;
+    if(values.mossa.types[1]){
+        if(values.mossa.types[3]){
+            values.target.hp += values.mossa.power * values.applier.stats[2] / 100;
+        }
+        else{
+            values.target.hp -= values.mossa.power * values.applier.stats[2] / values.target.stats[3];
+        }
+    }
+
+    if(values.mossa.types[2]){
+        for (int i = 0; i < values.mossa.effects.size(); i++)
+            values.target.status.push_back(values.mossa.effects[i]);
+    }
 }
 
 
-int main(){
-    //init
-    Load_Moveset("mosse.txt", global_moveset);
-    cout << "test xp and lvl stuff: " << endl;
 
-    for (int i = 0; i < instance_vector_DEBUG.size(); i++){
-        instance_vector_DEBUG[i]->levelup();
-        cout << instance_vector_DEBUG[i]->name << ": " << instance_vector_DEBUG[i]->xp << "/" << instance_vector_DEBUG[i]->xp_treshold << " xp" << endl;
+
+int battle(team team1, team team2, team total){
+    int outcome = 0;
+    int currentturn = 0;
+    unsigned int BattleTimer = 0;
+    bool IsAlive[6] = {1, 1, 1, 1, 1, 1};
+    // 1     2       3
+    //
+    //    4      5       6
+
+    //set initial timers
+    for (int i = 0; i<total.members.size(); i++){
+        total.members[i].set_timer();
     }
 
-    int opt;
 
-    do{
-        menu();
-        cin >> opt;
-        if (opt == 1){
-            cout << "Creature Status:" << endl
-            << "Name: " << cerbiatto_instance.name << endl
-            << "Level: " << cerbiatto_instance.lvl << endl
-            << "HP: " << cerbiatto_instance.hp << "/" << cerbiatto_instance.hpmax << endl
-            << "Mana: " << cerbiatto_instance.mana << endl
-            << "XP: " << cerbiatto_instance.xp << "/" << cerbiatto_instance.xp_treshold << endl
-            << "Stats: " << endl
-            << "atk: " << cerbiatto_instance.stats[0] << endl
-            << "def: " << cerbiatto_instance.stats[1] << endl
-            << "matk: " << cerbiatto_instance.stats[2] << endl
-            << "mdef: " << cerbiatto_instance.stats[3] << endl
-            << "spd: " << cerbiatto_instance.stats[4] << endl;
-            //print moveset
-            cout << "Moveset: " << endl;
-            for (int i = 0; i < cerbiatto_instance.moves.size(); i++){
-                cout << i +1 << ") " << global_moveset[cerbiatto_instance.moves[i]].name << endl;
+    // main cycle
+    while(true){
+        BattleTimer++;
+
+    // update timers
+        for (int i = 0; i<total.members.size(); i++){
+            total.members[i].timer--;
+        }
+
+        // take turns
+        for (int i = 0; i<team1.members.size(); i++){
+            if (team1.members[i].timer == 0){
+                currentturn = i+1;
+                apply_move(team1.members[i].taketurn(total));
+                for (int j = 0; j < total.members.size(); j++){
+                    if (total.members[j].hp < 0){
+                        IsAlive[j] = 0;
+                        total.members[j].hp = 0;
+                    }
+                }
             }
         }
-        if (opt == 2){
-            cerbiatto_instance2.levelup();
-            cout << "Creature Status:" << endl
-                 << "Name: " << cerbiatto_instance2.name << endl
-                 << "Level: " << cerbiatto_instance2.lvl << endl
-                 << "HP: " << cerbiatto_instance2.hp << "/" << cerbiatto_instance2.hpmax << endl
-                 << "Mana: " << cerbiatto_instance2.mana << endl
-                 << "XP: " << cerbiatto_instance2.xp << "/" << cerbiatto_instance2.xp_treshold << endl
-                 << "Stats: " << endl
-                 << "atk: " << cerbiatto_instance2.stats[0] << endl
-                 << "def: " << cerbiatto_instance2.stats[1] << endl
-                 << "matk: " << cerbiatto_instance2.stats[2] << endl
-                 << "mdef: " << cerbiatto_instance2.stats[3] << endl
-                 << "spd: " << cerbiatto_instance2.stats[4] << endl;
-
-            cout << "Moveset: " << endl;
-            for (int i = 0; i < cerbiatto_instance2.moves.size(); i++){
-                cout << i +1 << ") " << global_moveset[cerbiatto_instance2.moves[i]].name << endl;
+        for (int i = 0; i<team2.members.size(); i++){
+            if (team2.members[i].timer == 0){
+                currentturn = i+1;
+                apply_move(team2.members[i].AItaketurn(total, time(NULL)));
+                for (int j = 0; j < total.members.size(); j++){
+                    if (total.members[j].hp < 0){
+                        IsAlive[j] = 0;
+                        total.members[j].hp = 0;
+                    }
+                }
             }
         }
-
-        if (opt == 3){
-            for (int i = 0; i < global_moveset.size(); i++){
-                cout << global_moveset[i].name << endl;
-            }
+        
+        if (IsAlive[0] == 0 && IsAlive[1] == 0 && IsAlive[2] == 0){
+            outcome = 2;
+            break;
         }
-
-        if (opt == 4){
-            cerbiatto_instance2.xp += 100;
+        if (IsAlive[3] == 0 && IsAlive[4] == 0 && IsAlive[5] == 0){
+            outcome = 1;
+            break;
         }
+    }
 
-    } while (opt != 0);
-
-    return 0;
+    //return 1 if team1 wins, 2 if team2 wins
+    return outcome;
 }
