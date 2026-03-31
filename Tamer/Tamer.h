@@ -211,6 +211,70 @@ creature miaospellcaster{"spellcaster", {20, 64, 120, 105, 98, 80}, 1.6, {1, 5, 
 
 
 //genetics vector are 6 elements long
+
+vector<creature> Load_Creatures(string filename){
+    string tempname;
+    vector<int> tempstats;
+    float grt_rate;
+    vector<int> tempmvlvllrnlvl;
+    vector<int> moveset;
+    string src_evolution;
+    int ev_level;
+
+
+    ifstream infile(filename);
+    string firstline;
+    getline(infile, firstline);
+    vector<creature> returnthis;
+
+
+
+    //dynamic vectors are termitaed with -1
+    while (infile >> tempname >> tempstats[0] >> tempstats[1] >> tempstats[2] >> tempstats[3]  >> tempstats[4] >> tempstats[5] >> grt_rate){
+        int i = 0;
+        while (infile >> tempmvlvllrnlvl[i]){
+            i++;
+            if(tempmvlvllrnlvl[i] < 0){
+                int pupuppapaa;
+                infile >> pupuppapaa;
+                break;
+            }
+        }
+
+        i = 0;
+
+        while (infile >> moveset[i]){
+            i++;
+            if(moveset[i] < 0){
+                int pupuppapaa;
+                infile >> pupuppapaa;
+                break;
+            }
+        }
+
+        infile >> firstline; //discard evolution
+        infile >> ev_level;
+
+        creature tempcr{
+            tempname,
+            tempstats,
+            grt_rate,
+            tempmvlvllrnlvl,
+            moveset,
+            //handle evolutions later
+            nullptr,
+            ev_level
+        };
+    }
+
+    return returnthis;
+}
+
+vector<creature_instance> Load_squad(){
+
+}
+
+
 creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "mr_istanza");
 creature_instance cerbiatto_instance2 = CreateInstance(&mr_cerbiatto, {1.1, 0.9, 1, 1, 1.1, 1}, "mr_istanza2");
 creature_instance cerbiatto_instance3 = CreateInstance(&mr_cerbiatto, {0.8, 1.3, 1, 1.3, 0.7, 1, 1}, "mr_istanza3");
