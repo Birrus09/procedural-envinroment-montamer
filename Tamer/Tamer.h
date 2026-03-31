@@ -265,6 +265,7 @@ vector<creature> Load_Creatures(string filename){
             nullptr,
             ev_level
         };
+        returnthis.push_back(tempcr);
     }
 
     return returnthis;
