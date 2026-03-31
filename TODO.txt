@@ -85,10 +85,11 @@ meduse volanti
 
 ---BEAST TAMER---
 
-add creature dictionary
-add battle system
+fix evolution reading from files
+add creature dictionary --done
+add battle system       --done
 add saving on file
-add UI with tests:
+add UI with tests:      --done
   - squad manager
   - battle
   - mini game demo
