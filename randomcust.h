@@ -3,3 +3,7 @@ float randomnum(int &seed){
     float caspita = seed / 4273.0;
     return caspita;
 }
+
+bool chance(float probability, int &seed){
+    return randomnum(seed) < probability;
+}
