@@ -142,22 +142,28 @@ struct creature_instance{
     }
 
     void levelup(){
-        if (this->xp >= this->xp_treshold){
-            this->xp -= this->xp_treshold;
-            this->lvl++;
-            this->updatexptreshold();
-            //update stats
-            for (int i = 0; i < 5; i++){
-                this->stats[i] += (int)(this->instance_of->base_stats[i] * this->genetics[i] * 0.07);
-            }
-                this->hpmax += (int)(this->instance_of->base_stats[5] * this->genetics[5] * 0.08);
-                this->hp = this->hpmax;
-            for (int i = 0; i < this->instance_of->moves_learning_level.size(); i++){
-                if (this->lvl == this->instance_of->moves_learning_level[i]){
-                    this->moves.push_back(this->instance_of->moveset[i]);
+        while (true){
+            if (this->xp >= this->xp_treshold){
+                this->xp -= this->xp_treshold;
+                this->lvl++;
+                this->updatexptreshold();
+                //update stats
+                for (int i = 0; i < 5; i++){
+                    this->stats[i] += (int)(this->instance_of->base_stats[i] * this->genetics[i] * 0.06);
+                }
+                    this->hpmax += (int)(this->instance_of->base_stats[5] * this->genetics[5] * 0.07);
+                    this->hp = this->hpmax;
+                for (int i = 0; i < this->instance_of->moves_learning_level.size(); i++){
+                    if (this->lvl == this->instance_of->moves_learning_level[i]){
+                        this->moves.push_back(this->instance_of->moveset[i]);
+                    }
                 }
             }
+            else{
+                break;
+            }
         }
+
     }
 };
 
@@ -172,6 +178,7 @@ struct creature_instance{
 
 
 // don't touch this
+//FUCK YOU PAST ME NOW I NEED A NEW FUNCTION
 creature_instance CreateInstance(creature* base, vector<float> genetics_vector, string name){
     creature_instance giveback{
         name,
@@ -187,6 +194,24 @@ creature_instance CreateInstance(creature* base, vector<float> genetics_vector, 
         {},
         base,
         0
+    };
+    return giveback;
+}
+
+creature_instance CreateInitializedInstance(string name, int lvl, int xp, int xp_tresh, int hp, int hp_tresh, int mana, vector<int> stats, vector<float> gen, vector<int> moves, vector<string> status, vector<float> gen_vec, creature base){
+    creature_instance giveback{
+        name,
+        lvl,
+        xp,
+        xp_tresh,
+        hp,
+        hp_tresh,
+        mana,
+        stats,
+        gen_vec,
+        moves,
+        status,
+        &base
     };
     return giveback;
 }
@@ -213,10 +238,12 @@ creature miaospellcaster{"spellcaster", {20, 64, 120, 105, 98, 80}, 1.6, {1, 5, 
 //genetics vector are 6 elements long
 
 vector<creature> Load_Creatures(string filename){
+
     string tempname;
-    vector<int> tempstats;
+    vector<int> tempstats(6);
     float grt_rate;
     vector<int> tempmvlvllrnlvl;
+    int tempm;
     vector<int> moveset;
     string src_evolution;
     int ev_level;
@@ -227,28 +254,27 @@ vector<creature> Load_Creatures(string filename){
     getline(infile, firstline);
     vector<creature> returnthis;
 
-
-
     //dynamic vectors are termitaed with -1
     while (infile >> tempname >> tempstats[0] >> tempstats[1] >> tempstats[2] >> tempstats[3]  >> tempstats[4] >> tempstats[5] >> grt_rate){
+        //cout << "loading creature: " << tempname << endl;
         int i = 0;
-        while (infile >> tempmvlvllrnlvl[i]){
-            i++;
-            if(tempmvlvllrnlvl[i] < 0){
-                int pupuppapaa;
-                infile >> pupuppapaa;
+        while (infile >> tempm){
+            if(tempm < 0){
                 break;
+            }
+            else{
+                tempmvlvllrnlvl.push_back(tempm);
             }
         }
 
         i = 0;
 
-        while (infile >> moveset[i]){
-            i++;
-            if(moveset[i] < 0){
-                int pupuppapaa;
-                infile >> pupuppapaa;
+        while (infile >> tempm){
+            if(tempm < 0){
                 break;
+            }
+            else{
+                moveset.push_back(tempm);
             }
         }
 
@@ -271,10 +297,97 @@ vector<creature> Load_Creatures(string filename){
     return returnthis;
 }
 
-vector<creature_instance> Load_squad(){
 
+
+
+void Savesquad(string filename, vector<creature_instance> squad){
+    ofstream fileout(filename);
+    fileout << "name            lvl  xp    xp_tresh    hp    hp_max   mana   stats                        gen_vec         moves        base(name)      status" << endl;
+    for (int i = 0; i < squad.size(); i++){
+        fileout << squad[i].name << " " << squad[i].lvl << " " << squad[i].xp << " " << squad[i].xp_treshold << " " << squad[i].hp << " " << squad[i].hpmax << " " << squad[i].mana << " ";
+        for (int j = 0; j < 6; j++){
+            fileout << squad[i].stats[j] << " ";
+        }
+        for (int j = 0; j < 6; j++){
+            fileout << squad[i].genetics[j] << " ";
+        }
+        for (int j = 0; j < squad[i].moves.size(); j++){
+            fileout << squad[i].moves[j] << " ";
+        }
+        fileout << -1 << " "; //moveset terminator
+        fileout << squad[i].instance_of->name << " ";
+        for (int j = 0; j < squad[i].status.size(); j++){
+            fileout << squad[i].status[j] << " ";
+        }
+        fileout << "end" << endl;
+    }
 }
 
+vector<creature_instance> Load_squad(string filename, vector<creature> dict){
+    vector<creature_instance> returnthis;
+    ifstream infile(filename);
+    string name;
+    int lvl, xp, xp_tresh, hp, hp_tresh, mana;
+    string basename;
+
+    //discard first line
+    string firstline;
+    getline(infile, firstline);
+    
+    while (infile >> name >> lvl >> xp >> xp_tresh >> hp >> hp_tresh >> mana){
+        creature_instance tempcr{
+            name,
+            lvl,
+            xp,
+            xp_tresh,
+            hp,
+            hp_tresh,
+            mana,
+            vector<int>(6),      // Initialize stats with 6 elements
+            vector<float>(6),    // Initialize genetics with 6 elements
+            {},
+            {},
+            nullptr
+        };
+        
+        // Read 6 stats values
+        for (int i = 0; i < 6; i++){
+            infile >> tempcr.stats[i];
+        }
+        
+        // Read 6 genetics values
+        for (int i = 0; i < 6; i++){
+            infile >> tempcr.genetics[i];
+        }
+        
+        // Read 4 moves
+        for (int i = 0; i < 4; i++){
+            int temp;
+            infile >> temp;
+            tempcr.moves.push_back(temp);
+        }
+        
+        // Read base creature name and find it in dict
+        infile >> basename;
+        for (int i = 0; i < dict.size(); i++){
+            if (dict[i].name == basename){
+                tempcr.instance_of = &dict[i];
+                break;
+            }
+        }
+        
+        // Read status effects until "end"
+        string temp;
+        while (infile >> temp && temp != "end"){
+            tempcr.status.push_back(temp);
+        }
+        
+        returnthis.push_back(tempcr);
+    }
+    
+    infile.close();
+    return returnthis;
+}
 
 creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "mr_istanza");
 creature_instance cerbiatto_instance2 = CreateInstance(&mr_cerbiatto, {1.1, 0.9, 1, 1, 1.1, 1}, "mr_istanza2");
@@ -286,4 +399,4 @@ creature_instance big_rock = CreateInstance(&not_so_innocuous_rock, {1, 1, 1, 1,
 
 creature_instance megamiao = CreateInstance(&miaospellcaster, {1, 1, 1, 1, 1, 1, 1}, "miao :£");
 
-vector <creature_instance*> instance_vector_DEBUG = {&cerbiatto_instance, &cerbiatto_instance2, &cerbiatto_instance3, &fleshgorger_instance, &cerbiattp_player, &big_rock, &megamiao};
+//vector <creature_instance*> instance_vector_DEBUG = {&cerbiatto_instance, &cerbiatto_instance2, &cerbiatto_instance3, &fleshgorger_instance, &cerbiattp_player, &big_rock, &megamiao};
