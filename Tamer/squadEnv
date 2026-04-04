@@ -1,0 +1,4 @@
+name                    lvl  xp     xp_tresh    hp    hp_max   mana   stats                        gen_vec         moves        base(name)      status
+mr_cerbiatto_instance   1    0      100         91    91        5       101 94 105 90 107 106   1.01 0.94 1.06 0.9 1.07 0.91    0 -1 mr_cerbiatto end
+spiddy_instance         1    0      100         68    68        5       108 59 116 19 135 12    0.99 1.09 1.01 0.97 1.08 1.06   0 -1 spiddy end
+floater_instance        1    0      100         152   152       5       35 125 159 161 61 110   1.01 1 1.03 1.01 0.94 1.05      0 -1 floater end
