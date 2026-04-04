@@ -5,23 +5,31 @@
 
 using namespace std;
 
+int globseed = 12345;
 
 void menu(){
-    cout << "0) quit, 1) see creature status, 2) see creature2 status, 3) check initialization, 4) add 100xp to c2, 5) test battle" << endl;
+    cout << "0) quit, 1) see creature status, 2) see creature2 status, 3) check initialization, 4) add 100xp to c2, 5) test battle, 6)team editor" << endl;
 }
 
 
 int main(){
-    //init
+    int squad_opt;
+    vector<creature_instance> current_team;
+    cout << "loading moves" << endl;
+    // init
     Load_Moveset("mosse.txt", global_moveset);
-    cout << "test xp and lvl stuff: " << endl;
-
-    for (int i = 0; i < instance_vector_DEBUG.size(); i++){
-        instance_vector_DEBUG[i]->levelup();
-        cout << instance_vector_DEBUG[i]->name << ": " << instance_vector_DEBUG[i]->xp << "/" << instance_vector_DEBUG[i]->xp_treshold << " xp" << endl;
-    }
+    cout << "Loaded " << global_moveset.size() << " moves" << endl;
+    cout << "loading creatures" << endl;
+    vector<creature> testvec = Load_Creatures("dict.txt");
+    cout << "Loaded " << testvec.size() << " creatures" << endl;
+    cout << "loading team1" << endl;
+    vector<creature_instance> Team1 = Load_squad("squad.txt", testvec);
+    cout << "Loaded " << Team1.size() << " members in Team1" << endl;
+    vector<creature_instance> Team2 = Load_squad("squadEnv.txt", testvec);
+    cout << "Loaded " << Team2.size() << " members in Team2" << endl;
 
     int opt;
+    int opt2;
 
     do{
         menu();
@@ -76,6 +84,133 @@ int main(){
             cerbiatto_instance2.xp += 100;
         }
 
+        if (opt == 5){
+
+        }
+        if (opt == 6){
+            do{
+                cout << "0) back, 1) team1, 2) team2" << endl;
+
+                cin >> squad_opt;
+                if (squad_opt == 1){
+                    current_team = Team1;
+                }
+                if  (squad_opt == 2){
+                    current_team = Team2;
+                }
+                    do{
+                        cout << "0) back, 1) add, 2) remove, 3) list, 4) save, 5) edit member" << endl;
+                        cin >> opt2;
+                        if (opt2 == 1){
+                            for (int i = 0; i < testvec.size(); i++)
+                            {
+                                cout << i + 1 << ") " << testvec[i].name << endl;
+                            }
+                            int choice;
+                            cin >> choice;
+                            choice--;
+                            current_team.push_back(CreateInstance(&testvec[choice], {(interval(90, 110, globseed) / (float)100.0), (interval(90, 110, globseed) / (float)100.0), (interval(90, 110, globseed) / (float)100.0), (interval(90, 110, globseed) / (float)100.0), (interval(90, 110, globseed) / (float)100.0), (interval(90, 110, globseed) / (float)100.0)}, testvec[choice].name + "_instance"));
+                        }
+                        if (opt2 == 2){
+                            // remove
+                            for (int i = 0; i < current_team.size(); i++)
+                            {
+                                cout << i + 1 << ") " << current_team[i].name << endl;
+                            }
+                            int choice;
+                            cin >> choice;
+                            choice--;
+                            current_team.erase(current_team.begin() + choice);
+                        }
+                        if (opt2 == 3){
+                            for (int i = 0; i < current_team.size(); i++)
+                            {
+                                cout << i + 1 << ") " << current_team[i].name << endl;
+                            }
+                        }
+                        if (opt2 == 4){
+                            if (squad_opt == 1){
+                                Savesquad("squad.txt", current_team);
+                            }
+                            if (squad_opt == 2){
+                                Savesquad("squadEnv.txt", current_team);
+                            }
+                        }
+                        if (opt2 == 5){
+                            creature_instance* choice;
+                            for (int i = 0; i < current_team.size(); i++){
+                                cout << i + 1 << ") " << current_team[i].name << endl;
+                            }
+                            int choice2;
+                            cin >> choice2;
+                            choice2--;
+                            choice = &current_team[choice2];
+                            do{
+                                cout << "0) quit, 1) edit name, 2) add xp, 3) edit genetics, 4) edit moveset, 5)" << endl;
+                                cin >> opt2;
+                                if (opt2 == 1){
+                                    cout << "Enter new name: " << endl;
+                                    string newname;
+                                    cin >> newname;
+                                    choice->name = newname;
+                                }
+                                if (opt2 == 2){
+                                    cout << "Enter xp to add: " << endl;
+                                    int xp;
+                                    cin >> xp;
+                                    choice->xp += xp;
+                                    choice->levelup();
+                                }
+                                if (opt2 == 4){
+                                    if (choice->moves.size() <= 3){
+                                        {cout << "Current moveset: " << endl;
+                                        for (int i = 0; i < choice->moves.size(); i++){
+                                            cout << i + 1 << ") " << global_moveset[choice->moves[i]].name << endl;
+                                        }
+                                        cout << "Available moves: " << endl;
+                                        for (int i = 0; i < choice->instance_of->moveset.size(); i++){
+                                            cout << i + 1 << ") " << global_moveset[choice->instance_of->moveset[i]].name << endl;
+                                        }
+                                        cout << "Enter move to add: " << endl;
+                                        int move_choice;
+                                        cin >> move_choice;
+                                        move_choice--;
+                                        choice->moves.push_back(choice->instance_of->moveset[move_choice]);}
+                                    }
+                                    else{
+                                        cout << "select move to overwrite: " << endl;
+                                        for (int i = 0; i < choice->moves.size(); i++){
+                                            cout << i + 1 << ") " << global_moveset[choice->moves[i]].name << endl;
+                                        }
+                                        int move_choice;
+                                        cin >> move_choice;
+                                        move_choice--;
+                                        cout << "Available moves: " << endl;
+                                        for (int i = 0; i < choice->instance_of->moveset.size(); i++){
+                                            cout << i + 1 << ") " << global_moveset[choice->instance_of->moveset[i]].name << endl;
+                                        }
+                                        cout << "Enter move to add: " << endl;
+                                        int new_move_choice;
+                                        cin >> new_move_choice;
+                                        new_move_choice--;
+                                        choice->moves[move_choice] = choice->instance_of->moveset[new_move_choice];
+                                    }
+                                }
+                            } while (opt2 != 0);
+                        }
+                } while (opt2 != 0);
+            } while (opt != 0);
+        }
+        if (opt == 0){
+            if (squad_opt == 1){
+                Savesquad("squad.txt", current_team);
+            }
+            if (squad_opt == 1){
+                Savesquad("squadEnv.txt", current_team);
+            }
+            
+            cout << "Exiting..." << endl;
+        }
     } while (opt != 0);
 
     return 0;
