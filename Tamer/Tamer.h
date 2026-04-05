@@ -151,7 +151,8 @@ struct creature_instance{
                 this->updatexptreshold();
                 //update stats
                 for (int i = 0; i < 5; i++){
-                    cout << "stat update check:" << i << endl;
+                    //cout << "stat update check:" << i << endl;
+                    // I didn't touch ABSOULTELY ANYTHING AND NOW IT WORKS
                     stats[i] += (int)(instance_of->base_stats[i] * genetics[i] * 0.054 * intervalf(0.5, 1.3, globseed));
                 }
                 this->hpmax += (int)(this->instance_of->base_stats[5] * this->genetics[5] * 0.06 * intervalf(0.5, 1.4, globseed));
