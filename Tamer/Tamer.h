@@ -7,6 +7,7 @@
 
 #define maxspd 750
 #define maxstats 300
+int globseed = 12345;
 
 using namespace std;
 
@@ -85,7 +86,7 @@ struct creature_instance{
     int hp;
     int hpmax;
     int mana; // x/5
-    vector<int> stats;
+    vector<int> stats; //5
     vector<float> genetics;
     vector<int> moves; //index of moveset
     vector<string> status;
@@ -143,17 +144,19 @@ struct creature_instance{
 
     void levelup(){
         while (true){
-            if (this->xp >= this->xp_treshold){
+            if (this->xp >= this->xp_treshold)
+            {
                 this->xp -= this->xp_treshold;
                 this->lvl++;
                 this->updatexptreshold();
                 //update stats
                 for (int i = 0; i < 5; i++){
-                    this->stats[i] += (int)(this->instance_of->base_stats[i] * this->genetics[i] * 0.06);
+                    cout << "stat update check:" << i << endl;
+                    stats[i] += (int)(instance_of->base_stats[i] * genetics[i] * 0.054 * intervalf(0.5, 1.3, globseed));
                 }
-                    this->hpmax += (int)(this->instance_of->base_stats[5] * this->genetics[5] * 0.07);
-                    this->hp = this->hpmax;
-                for (int i = 0; i < this->instance_of->moves_learning_level.size(); i++){
+                this->hpmax += (int)(this->instance_of->base_stats[5] * this->genetics[5] * 0.06 * intervalf(0.5, 1.4, globseed));
+                this->hp = this->hpmax;
+                for (int i = 0; i < this->instance_of->moves_learning_level.size() && i < this->instance_of->moveset.size(); i++){
                     if (this->lvl == this->instance_of->moves_learning_level[i]){
                         this->moves.push_back(this->instance_of->moveset[i]);
                     }
@@ -190,7 +193,7 @@ creature_instance CreateInstance(creature* base, vector<float> genetics_vector, 
         5,
         {(int)(base->base_stats[0] * genetics_vector[0]), (int)(base->base_stats[1] * genetics_vector[1]), (int)(base->base_stats[2] * genetics_vector[2]), (int)(base->base_stats[3] * genetics_vector[3]), (int)(base->base_stats[4] * genetics_vector[4])},
         genetics_vector,
-        {0},
+        {base->moveset[0]},
         {},
         base,
         0
@@ -220,6 +223,7 @@ creature_instance CreateInitializedInstance(string name, int lvl, int xp, int xp
 
 creature_instance Evolve(creature_instance &instance){
     creature_instance evoluzione;
+    // needs to be initialized
     evoluzione = CreateInstance(instance.instance_of->evolution, instance.genetics, instance.instance_of->evolution->name);
     delete(&instance);
     return evoluzione;
@@ -304,7 +308,7 @@ void Savesquad(string filename, vector<creature_instance> squad){
     ofstream fileout(filename);
     fileout << "name            lvl  xp    xp_tresh    hp    hp_max   mana   stats                        gen_vec         moves        base(name)      status" << endl;
     for (int i = 0; i < squad.size(); i++){
-        fileout << squad[i].name << " " << squad[i].lvl << " " << squad[i].xp << " " << squad[i].xp_treshold << " " << squad[i].hp << " " << squad[i].hpmax << " " << squad[i].mana << " ";
+        fileout << squad[i].name << "\t\t" << squad[i].lvl << "\t" << squad[i].xp << " " << squad[i].xp_treshold << "\t" << squad[i].hp << " " << squad[i].hpmax << " " << squad[i].mana << "\t";
         for (int j = 0; j < 6; j++){
             fileout << squad[i].stats[j] << " ";
         }
@@ -314,8 +318,8 @@ void Savesquad(string filename, vector<creature_instance> squad){
         for (int j = 0; j < squad[i].moves.size(); j++){
             fileout << squad[i].moves[j] << " ";
         }
-        fileout << -1 << " "; //moveset terminator
-        fileout << squad[i].instance_of->name << " ";
+        fileout << -1 << "\t"; //moveset terminator
+        fileout << squad[i].instance_of->name << "\t";
         for (int j = 0; j < squad[i].status.size(); j++){
             fileout << squad[i].status[j] << " ";
         }
@@ -360,10 +364,9 @@ vector<creature_instance> Load_squad(string filename, vector<creature> dict){
             infile >> tempcr.genetics[i];
         }
         
-        // Read 4 moves
-        for (int i = 0; i < 4; i++){
-            int temp;
-            infile >> temp;
+        // Read moves until -1
+        int temp;
+        while (infile >> temp && temp != -1){
             tempcr.moves.push_back(temp);
         }
         
@@ -377,9 +380,9 @@ vector<creature_instance> Load_squad(string filename, vector<creature> dict){
         }
         
         // Read status effects until "end"
-        string temp;
-        while (infile >> temp && temp != "end"){
-            tempcr.status.push_back(temp);
+        string temp2;
+        while (infile >> temp2 && temp2 != "end"){
+            tempcr.status.push_back(temp2);
         }
         
         returnthis.push_back(tempcr);
@@ -389,7 +392,7 @@ vector<creature_instance> Load_squad(string filename, vector<creature> dict){
     return returnthis;
 }
 
-creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "mr_istanza");
+/*creature_instance cerbiatto_instance = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "mr_istanza");
 creature_instance cerbiatto_instance2 = CreateInstance(&mr_cerbiatto, {1.1, 0.9, 1, 1, 1.1, 1}, "mr_istanza2");
 creature_instance cerbiatto_instance3 = CreateInstance(&mr_cerbiatto, {0.8, 1.3, 1, 1.3, 0.7, 1, 1}, "mr_istanza3");
 
@@ -397,6 +400,6 @@ creature_instance fleshgorger_instance = CreateInstance(&fleshgorger, {1, 1, 1, 
 creature_instance cerbiattp_player = CreateInstance(&mr_cerbiatto, {1, 1, 1, 1, 1, 1, 1}, "Sburb_player");
 creature_instance big_rock = CreateInstance(&not_so_innocuous_rock, {1, 1, 1, 1, 1, 1, 1}, "big_rock");
 
-creature_instance megamiao = CreateInstance(&miaospellcaster, {1, 1, 1, 1, 1, 1, 1}, "miao :£");
+creature_instance megamiao = CreateInstance(&miaospellcaster, {1, 1, 1, 1, 1, 1, 1}, "miao :£");*/
 
 //vector <creature_instance*> instance_vector_DEBUG = {&cerbiatto_instance, &cerbiatto_instance2, &cerbiatto_instance3, &fleshgorger_instance, &cerbiattp_player, &big_rock, &megamiao};
